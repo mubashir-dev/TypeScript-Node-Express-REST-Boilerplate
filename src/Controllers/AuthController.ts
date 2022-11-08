@@ -34,7 +34,6 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
 export const signIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { username, email, password } = req.body;
-        console.log(`🚀 ~ req.body`, req.body)
         const findOptions = {
             ...(email) && {
                 email: {
