@@ -15,10 +15,10 @@ dotenv.config();
 connectDatabase(process.env.DB_URL + '/' + process.env.DB_NAME);
 app.use(morgan("dev"));
 app.get("/welcome", (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).send({ message: "✔ Server is Up & Running" });
+    res.status(200).send({ message: "✓ Server is Up & Running" });
 });
 //Routes
 app.use("/auth", AuthRoutes);
 app.listen(process.env.PORT, () => {
-    console.log(`🚀 Server is Up & Running On Port ${process.env.PORT}`);
+    console.log(`✓ Server is Up & Running On Port ${process.env.PORT}`);
 });

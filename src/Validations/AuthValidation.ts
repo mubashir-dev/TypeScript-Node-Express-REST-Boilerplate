@@ -9,9 +9,9 @@ export const signUpValidator = Joi.object({
 });
 
 export const signInValidator = Joi.object({
-    type: Joi.number().required().valid('email', 'username'),
-    email: Joi.alternatives().conditional('type', { is: 'email', then: Joi.string().required() }),
-    username: Joi.alternatives().conditional('type', { is: 'username', then: Joi.string().required() }),
+    type: Joi.string().required().valid('email', 'username'),
+    email: Joi.string().email().when('type', { is: 'email', then: Joi.required() }),
+    username: Joi.string().when('type', { is: 'username', then: Joi.required() }),
     password: Joi.string().required(),
 });
 
