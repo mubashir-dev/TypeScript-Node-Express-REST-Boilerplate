@@ -17,4 +17,6 @@ export interface IUser extends Document {
     password: string;
     status: string;
     role: string;
+    _id?: string;
 }
+export type IUserSignUp = Pick<IUser, '_id' | 'name' | 'email' | 'username'>

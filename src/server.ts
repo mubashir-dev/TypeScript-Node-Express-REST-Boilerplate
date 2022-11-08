@@ -20,5 +20,5 @@ app.get("/welcome", (req: Request, res: Response, next: NextFunction) => {
 //Routes
 app.use("/auth", AuthRoutes);
 app.listen(process.env.PORT, () => {
-    console.log(`✔ Server is Up & Running On Port ${process.env.PORT}`);
+    console.log(`🚀 Server is Up & Running On Port ${process.env.PORT}`);
 });

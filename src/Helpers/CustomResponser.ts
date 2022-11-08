@@ -57,3 +57,11 @@ export const simpleValidationError = function (res: Response, msg: string) {
     };
     return res.status(400).json(resData);
 };
+
+export const unauthorizeError = function (res: Response, msg: string) {
+    let resData = {
+        status: false,
+        message: msg,
+    };
+    return res.status(401).json(resData);
+};

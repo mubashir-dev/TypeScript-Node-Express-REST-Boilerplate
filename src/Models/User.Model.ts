@@ -34,5 +34,10 @@ const UserSchema: Schema = new Schema(
     },
     { timestamps: true }
 );
+// Hooks
+UserSchema.pre<IUser>('save', function (next) {
+    this.email = this.email.toLowerCase();
+    next();
+});
 const User = mongoose.model<IUser>("User", UserSchema);
 export default User;
