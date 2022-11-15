@@ -19,4 +19,10 @@ export interface IUser extends Document {
     role: string;
     _id?: string;
 }
-export type IUserSignUp = Pick<IUser, '_id' | 'name' | 'email' | 'username'>
+
+export interface IUserPlayload extends IUser {
+    accessToken: string;
+    refreshToken: string;
+}
+export type IUserBasicData = Pick<IUser, '_id' | 'name'>
+export type UserPlayload = Pick<IUserPlayload, '_id' | 'name' | 'accessToken' | 'refreshToken'>;
