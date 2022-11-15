@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import * as AuthService from "../Services/AuthService";
 import * as ApiResponse from "../Helpers/CustomResponser";
 import User from '../Models/User.Model';
-import { IUserSignUp } from "../Interfaces/IUser.Interface";
+import { IUserBasicData, UserPlayload } from "../Interfaces/IUser.Interface";
 import * as CommonService from '../Services/CommonService';
+import * as JwtService from '../Services/JwtService';
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -19,11 +20,9 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
             return ApiResponse.validationWithData(res, [`Username ${username} already taken`])
         }
         const userSignUp = await AuthService.store(req.body);
-        const data: IUserSignUp = {
+        const data: IUserBasicData = {
             _id: userSignUp._id,
             name: userSignUp.name,
-            email: userSignUp.email,
-            username: userSignUp.username
         };
         return ApiResponse.successWithData(res, 'account created successfully', data);
     } catch (error: any) {
@@ -55,14 +54,20 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
         if (!passwordMatching) {
             return ApiResponse.unauthorizeError(res, 'credentials are not matching');
         }
-        const data: IUserSignUp = {
+        const data: IUserBasicData = {
             _id: userExist._id,
             name: userExist.name,
-            email: userExist.email,
-            username: userExist.username
         };
-        return ApiResponse.successWithData(res, 'login sucessfully', data);
+        const [accessToken, refreshToken]: string | any = await Promise.all([JwtService.generateAccessToken(data), JwtService.generateRefreshToken(data)]);
+        const userPlayload: UserPlayload = {
+            _id: data._id,
+            name: data.name,
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        }
+        return ApiResponse.successWithData(res, 'login sucessfully', userPlayload);
     } catch (error: any) {
         return ApiResponse.ServerError(res, `${error.message}`);
     }
 }
+
