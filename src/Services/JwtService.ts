@@ -64,7 +64,7 @@ export const verifyAccessToken = (
                 err.name === "JsonWebTokenError" ? "Unauthorized" : err.message;
             return next(new Error("Invalid Token"));
         }
-        req.body.user = payload;
+        req.user = payload;
         next();
     });
 };
