@@ -22,7 +22,14 @@ export const accountVerification = Joi.object({
     code: Joi.string().required().label('Code'),
 });
 
-export const sendVerificationCode = Joi.object({
+export const passwordReset = Joi.object({
+    password: Joi.string().required(),
+    confirm_password: Joi.any().valid(Joi.ref('password')).required()
+        .label('Confirm password')
+        .options({ messages: { 'any.only': '{{#label}} does not match' } })
+});
+
+export const emailVerification = Joi.object({
     email: Joi.string().email().required().label('Email')
 });
 

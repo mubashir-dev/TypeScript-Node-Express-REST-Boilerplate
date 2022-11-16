@@ -15,10 +15,11 @@ export const Authenticate = async (
         if (!jwt) {
             return ApiResponse.unauthorizeError(res, "Unauthorized access");
         }
-        await JwtService.verifyAccessToken(req, res, next);
+        const user = await JwtService.verifyAccessToken(req, res, next);
+        req.user = user;
         next();
     } catch (error: any) {
-        if (error.name === "TokenExpiredError") {
+        if (error) {
             res.status(401).json({ message: "Access token has been expired" });
             return;
         }

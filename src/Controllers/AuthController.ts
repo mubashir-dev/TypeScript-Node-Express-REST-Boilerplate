@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import * as AuthService from "../Services/AuthService";
 import * as ApiResponse from "../Helpers/CustomResponser";
 import User from "../Models/User.Model";
-import { IUserBasicData, UserPlayload, UserTuple } from "../Interfaces/IUser.Interface";
+import UserCode from "../Models/UserCode.Model";
+import { IUserBasicData, UserPlayload, UserTuple, CodeType } from "../Interfaces/IUser.Interface";
 import * as CommonService from "../Services/CommonService";
 import * as JwtService from "../Services/JwtService";
 import * as EmailService from "../Services/EmailService";
@@ -30,10 +31,11 @@ export const signUp = async (
             ]);
         }
         const userSignUp = await AuthService.store(req.body);
-        const token = CommonService.generateVerificationToken();
-        const userActivation: any = await AuthService.storeVerificationToken({
+        const token = CommonService.generateToken();
+        const userActivation: any = await AuthService.storeUserCode({
             user: userSignUp._id,
             token: token,
+            type: CodeType.ACCOUNT_VERIFICATION
         });
         const data: IUserBasicData = {
             _id: userSignUp._id,
@@ -175,10 +177,11 @@ export const sendVerificationCode = async (
         if (userExist?.status != 'PENDING') {
             return ApiResponse.simpleValidationError(res, `Accoun has already been verified`);
         };
-        const token = CommonService.generateVerificationToken();
-        await AuthService.storeVerificationToken({
+        const token = CommonService.generateToken();
+        await AuthService.storeUserCode({
             user: userExist?._id,
             token: token,
+            type: CodeType.ACCOUNT_VERIFICATION
         });
         //send email with token
         const emailOptions: IEmailOptions = {
@@ -196,3 +199,75 @@ export const sendVerificationCode = async (
         return ApiResponse.ServerError(res, `${error.message} `);
     }
 };
+
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email } = req.body;
+        const checkEmail = await CommonService.checkIfExists(User, {
+            param: 'email',
+            value: email,
+        });
+        if (!checkEmail) {
+            return ApiResponse.notFound(res, "Account does not exist");
+        }
+        const userExist: UserTuple = await AuthService.findOne({ email });
+        if (userExist?.status != 'ACTIVE') {
+            return ApiResponse.simpleValidationError(res, `Account has not been verified`);
+        };
+        const token = CommonService.generateToken();
+        await AuthService.storeUserCode({
+            user: userExist?._id,
+            token: token,
+            type: CodeType.PASSWORD_RESET
+        });
+
+        //send email with token
+        const emailOptions: IEmailOptions = {
+            to: userExist?.email!,
+            from: "test@gmail.com",
+            subject: "Reset Password",
+            html: `<p>Reset Password,using the following lin <b> <a href="${req.protocol}://${req.get(
+                "host"
+            )}/auth/reset-password/${token}">Password Reset Link</a></b},the code is valid for 24 hours<p>`,
+        };
+        await EmailService.sendEmail(emailOptions);
+        return ApiResponse.successWithoutData(res, 'Password reset link has been sent successfully');
+    } catch (error: any) {
+        return ApiResponse.ServerError(res, `${error.message} `);
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { code } = req.params;
+        const { password } = req.body;
+        const checkCode = await CommonService.checkIfExists(UserCode, {
+            param: 'token',
+            value: code,
+        });
+        if (!checkCode) {
+            return ApiResponse.notFound(res, "Password reset link is invalid");
+        }
+        const codeExist = await AuthService.getUserCode({ token: code });
+
+        await AuthService.resetPassword({
+            _id: codeExist?.user,
+            password,
+            token: code
+        });
+        return ApiResponse.successWithoutData(res, 'Password has been restored successfully');
+    } catch (error: any) {
+        return ApiResponse.ServerError(res, `${error.message} `);
+    }
+}
+
+export const currentUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { _id } = req.user;
+        const userData: UserTuple = await AuthService.findOne({ _id });
+        return ApiResponse.successWithData(res, 'current logged user', userData);
+    }
+    catch (error: any) {
+        return ApiResponse.ServerError(res, error.message);
+    }
+}

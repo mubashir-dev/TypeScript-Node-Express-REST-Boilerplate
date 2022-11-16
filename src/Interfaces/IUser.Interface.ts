@@ -5,6 +5,11 @@ export enum Role {
     IS_USER = 'USER',
 }
 
+export enum CodeType {
+    PASSWORD_RESET = "PASSWORD_RESET",
+    ACCOUNT_VERIFICATION = "ACCOUNT_VERIFICATION"
+}
+
 export enum Status {
     IS_ACTIVE = 'ACTIVE',
     IS_PENDING = 'PENDING',
