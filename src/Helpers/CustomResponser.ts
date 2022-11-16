@@ -8,7 +8,7 @@ export const successWithoutData = function (res: Response, msg: string) {
     return res.status(200).json(data);
 };
 
-export const successWithData = function (res: Response, msg: string, data: Object) {
+export const successWithData = function (res: Response, msg: string, data: any) {
     let resData = {
         status: true,
         message: msg,

@@ -5,6 +5,11 @@ export enum Role {
     IS_USER = 'USER',
 }
 
+export enum CodeType {
+    PASSWORD_RESET = "PASSWORD_RESET",
+    ACCOUNT_VERIFICATION = "ACCOUNT_VERIFICATION"
+}
+
 export enum Status {
     IS_ACTIVE = 'ACTIVE',
     IS_PENDING = 'PENDING',
@@ -32,3 +37,4 @@ export interface IUserPlayload extends IUser {
 }
 export type IUserBasicData = Pick<IUser, '_id' | 'name'>
 export type UserPlayload = Pick<IUserPlayload, '_id' | 'name' | 'accessToken' | 'refreshToken'>;
+export type UserTuple = Omit<IUser, 'password'> | null;

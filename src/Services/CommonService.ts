@@ -14,7 +14,7 @@ export const checkIfExists = async (_model: any, options: QueryOptions) => {
     return exist ? true : false;
 }
 
-export const generateVerificationToken = (): string => {
+export const generateToken = (): string => {
     const tokenRaw = Math.floor(new Date().valueOf() * Math.random());
     return tokenRaw.toString().slice(0, 6);
 }

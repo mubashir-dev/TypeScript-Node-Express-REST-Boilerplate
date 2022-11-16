@@ -1,13 +1,18 @@
 import mongoose, { Schema } from "mongoose";
-import { IUserActication } from "../Interfaces/IUser.Interface";
+import { IUserActication, CodeType } from "../Interfaces/IUser.Interface";
 import User from './User.Model';
 
-const UserActivationSchema: Schema = new Schema(
+const UserCodeSchema: Schema = new Schema(
     {
         token: {
             type: String,
             required: true,
             unique: true,
+        },
+        type: {
+            type: String,
+            enum: CodeType,
+            required: true,
         },
         isExpire: {
             type: Number,
@@ -23,5 +28,5 @@ const UserActivationSchema: Schema = new Schema(
     { timestamps: true }
 );
 
-const UserActivation = mongoose.model<IUserActication>("UserActivation", UserActivationSchema);
-export default UserActivation;
+const UserCode = mongoose.model<IUserActication>("UserCode", UserCodeSchema);
+export default UserCode;

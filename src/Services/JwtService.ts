@@ -15,7 +15,6 @@ export const generateAccessToken = (
         };
         JWT.sign(jwtPayload, process.env.JWT_SECRET!, options, (error, token) => {
             if (error) {
-                console.log(error.message);
                 reject("JWT access token has not been issued");
                 return;
             }
@@ -58,14 +57,13 @@ export const verifyAccessToken = (
     const authHeader = req.headers["authorization"];
     const bearerToken = authHeader.split(" ");
     const token = bearerToken[1];
-    JWT.verify(token, process.env.JWT_SECRET!, (err, payload) => {
-        if (err) {
-            const message =
-                err.name === "JsonWebTokenError" ? "Unauthorized" : err.message;
-            return next(new Error("Invalid Token"));
-        }
-        req.user = payload;
-        next();
+    return new Promise((resolve, reject) => {
+        JWT.verify(
+            token, process.env.JWT_SECRET!, (err, payload) => {
+                if (err) return reject(err);
+                resolve(payload);
+            }
+        );
     });
 };
 
