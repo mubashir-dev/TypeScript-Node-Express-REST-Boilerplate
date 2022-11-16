@@ -18,7 +18,10 @@ export const sendEmail = async (emailOptions: IEmailOptions) => {
         ...emailOptions
     };
     await transporter.sendMail(email).catch(error => {
-        console.log('Email has not sent', error.message);
+        if (error)
+            console.log('❌ Email has not sent', error.message);
+        console.log('✔ Email has been sent');
+
     });
 
 }

@@ -18,3 +18,7 @@ export const signInValidator = Joi.object({
     password: Joi.string().required(),
 });
 
+export const accountVerification = Joi.object({
+    code: Joi.string().required().label('Code'),
+});
+
