@@ -89,14 +89,15 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
 export const activateAccount = async (req: Request, res: Response, next: NextFunction) => {
     const result = await AuthService.verifyToken(req.body.code);
     if (!result) {
-        return ApiResponse.simpleValidationError(res, 'account has already been verified');
+        return ApiResponse.simpleValidationError(res, `code does not exist`);
     }
-    if (result && result.isValid > 24) {
-        return ApiResponse.simpleValidationError(res, 'token is either invalid or expired');
+    if (result.isValid > 24) {
+        return ApiResponse.simpleValidationError(res, 'code is either invalid or expired');
     }
     //revoke token & activate account
     const activateUser = await AuthService.verifyAccount(result.userId, result._id);
     if (activateUser) {
         return ApiResponse.simpleValidationError(res, 'account successfully activated');
     }
+    return ApiResponse.simpleValidationError(res, 'account activation failed')
 }
