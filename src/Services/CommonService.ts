@@ -13,3 +13,8 @@ export const checkIfExists = async (_model: any, options: QueryOptions) => {
     const exist = await _model.exists(searchOptions);
     return exist ? true : false;
 }
+
+export const generateVerificationToken = (): string => {
+    const tokenRaw = Math.floor(new Date().valueOf() * Math.random());
+    return tokenRaw.toString().slice(0, 6);
+}

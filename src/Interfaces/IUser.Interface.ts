@@ -20,6 +20,12 @@ export interface IUser extends Document {
     _id?: string;
 }
 
+export interface IUserActication extends Document {
+    token: string;
+    isExpire: Date;
+    user: string;
+    _id?: string;
+}
 export interface IUserPlayload extends IUser {
     accessToken: string;
     refreshToken: string;
