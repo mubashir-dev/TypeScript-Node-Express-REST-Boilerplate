@@ -13,8 +13,8 @@ export const store = async (body: IUser) => {
 
 export const storeVerificationToken = async (body: any) => {
     const { user, token } = body;
-    const userActivation = new UserActivation({ user, token });
-    return userActivation.save();
+    const userActivation = await UserActivation.findOneAndUpdate({ user: user }, { user, token }, { upsert: true });
+    return userActivation;
 };
 
 export const verifyToken = async (token: string) => {

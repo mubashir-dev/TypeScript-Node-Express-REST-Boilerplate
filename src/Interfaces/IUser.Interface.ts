@@ -32,3 +32,4 @@ export interface IUserPlayload extends IUser {
 }
 export type IUserBasicData = Pick<IUser, '_id' | 'name'>
 export type UserPlayload = Pick<IUserPlayload, '_id' | 'name' | 'accessToken' | 'refreshToken'>;
+export type UserTuple = Omit<IUser, 'password'> | null;

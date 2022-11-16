@@ -22,3 +22,7 @@ export const accountVerification = Joi.object({
     code: Joi.string().required().label('Code'),
 });
 
+export const sendVerificationCode = Joi.object({
+    email: Joi.string().email().required().label('Email')
+});
+
